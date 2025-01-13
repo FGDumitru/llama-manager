@@ -1,16 +1,18 @@
 {
-    "name": "panthera/llama-manager",
+    "name": "fgdumitru/llama-manager",
     "description": "llama.cpp manager.",
     "type": "project",
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Panthera\\LlamaMManager\\": "src/"
+            "FGDumitru\\LlamaManager\\": "src/"
         }
     },
     "authors": [
         {
-            "name": "Florin-Gabriel Dumitru"
+            "name": "Florin-Gabriel Dumitru",
+            "email": "xelotx@gmail.com",
+            "role": "Developer"
         }
     ],
     "minimum-stability": "dev",
