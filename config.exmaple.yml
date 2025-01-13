@@ -1,0 +1,8 @@
+llama-server:
+  binary:
+    ~/NVME/llama.cpp/build/bin/llama-server
+  git-releases:
+    'https://github.com/ggerganov/llama.cpp/releases'
+  check-updates:
+    true
+
