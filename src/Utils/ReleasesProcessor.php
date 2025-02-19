@@ -22,6 +22,7 @@ class ReleasesProcessor
         foreach ($latestRelease['assets'] as $asset) {
             $releaseName = $asset['name'];
             $size = $asset['size'];
+            $created_at = $asset['created_at'];
             $browserDownloadUrl = $asset['browser_download_url']; //sample value: https://github.com/ggml-org/llama.cpp/releases/download/b4739/cudart-llama-bin-win-cu11.7-x64.zip
 
             // Extract the filename from the URL
@@ -30,15 +31,19 @@ class ReleasesProcessor
             // Check if the $archivePattern matches the $filename
             if (preg_match($regexPattern, $filename)) {
                 $matchedEntries++;
-                self::downloadAsset($entity, $browserDownloadUrl, $tagName);
+                self::downloadAsset($entity, $browserDownloadUrl, $tagName, $asset);
             }
         }
 
         return $matchedEntries;
     }
 
-    private static function downloadAsset($entity, $browserDownloadUrl, $tagName): void
+    private static function downloadAsset($entity, $browserDownloadUrl, $tagName, $asset): void
     {
+
+        $releaseName = $asset['name'];
+        $size = $asset['size'];
+        $created_at = $asset['created_at'];
 
         // Ensure we have the assets directory created.
         $directoryPath = Configuration::getDir('assets-dir') . DIRECTORY_SEPARATOR .$entity;
@@ -47,7 +52,7 @@ class ReleasesProcessor
             throw new \Exception("Failed to create directory '$directoryPath'.");
         }
 
-        $currentTag = '';
+        $currentTag = '[None]';
 
         if (file_exists($directoryPath . DIRECTORY_SEPARATOR . 'tag.txt')) {
             $currentTag = file_get_contents($directoryPath . DIRECTORY_SEPARATOR . 'tag.txt');
@@ -56,6 +61,10 @@ class ReleasesProcessor
         $basename = basename($browserDownloadUrl);
 
         if ($currentTag !== $tagName) {
+
+            echo PHP_EOL . "INFO: Update found for [$entity]. Old tag [$tagName] - Current tag [$currentTag]." . PHP_EOL;
+            echo "Asset size: [$size] bytes" . PHP_EOL;
+            echo "Release date: [$created_at]" . PHP_EOL;
 
             $releaseContent = file_get_contents($browserDownloadUrl);
             $releaseBinary = Configuration::getDir('binaries-dir') . DIRECTORY_SEPARATOR . $entity;
@@ -71,7 +80,8 @@ class ReleasesProcessor
             echo "No update required for [$entity]. Latest version is already available [$tagName]." . PHP_EOL;
         }
 
-        $a = 1;
+        echo PHP_EOL . '----------------------------------' . PHP_EOL;
+
     }
 
     private static function unzipFile($zipFilePath, $extractToDirectory): bool
