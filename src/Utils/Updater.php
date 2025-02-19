@@ -15,7 +15,7 @@ class Updater
     public function execute(): void
     {
         $this->checkLatestVersion();
-        echo "Updater executed successfully!\n";
+        echo  PHP_EOL . "Updater executed successfully!" . PHP_EOL;
     }
 
     /**
@@ -26,26 +26,27 @@ class Updater
     {
         $entries = Configuration::readConfiguration();
 
-        foreach ($entries as $key => $entry) {
+        foreach ($entries['builds'] as $key => $entry) {
 
             // Check if the updates have been disabled for this git project. Idem if the entry does not exist.
-            if (!$entry['check-updates'] ?? false) {
+            if (!($entry['check-updates'] ?? true)) {
                 continue;
             }
 
-            $gitReleasesLink = $entry['git-releases']['url'];
-
-            try {
+            // Process releases.
+            if ('git-release' === $entry['update-type']) {
+                $gitReleasesLink = $entry['git-releases']['url'];
                 $entriesArray = $this->fetchGitHubReleases($gitReleasesLink);
-
                 $latestRelease = reset($entriesArray);
-
                 ReleasesProcessor::ProcessAssets($key, $latestRelease, $entry);
-
-            } catch (Exception $e) {
-                echo 'Error: ' . $e->getMessage();
-                throw $e;
+                continue;
             }
+
+            // Process git clone style repos.
+            if ('git-repo' === $entry['update-type']) {
+                GitClonesProcessor::ProcessAssets($key, $entry);
+            }
+
 
         }
 

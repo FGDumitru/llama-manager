@@ -17,13 +17,7 @@ class ReleasesProcessor
         // Sample value for $archivePattern: "llama-b*-bin-ubuntu-x64.zip"
         $archivePattern = $entry['git-releases']['archive-pattern'][$binaryType]['subtypes'][$binarySubtype];
 
-        // Convert the wildcard pattern to a regex pattern
-        // Replace * with .* and ? with .
-        // Do not escape any characters that are part of the wildcard pattern
         $regexPattern = '/^' . str_replace(['*', '?'], ['.*', '.'], $archivePattern) . '$/';
-
-        // Debugging: Output the regex pattern
-        echo "Regex Pattern: $regexPattern\n";
 
         foreach ($latestRelease['assets'] as $asset) {
             $releaseName = $asset['name'];
@@ -47,7 +41,7 @@ class ReleasesProcessor
     {
 
         // Ensure we have the assets directory created.
-        $directoryPath = "assets/$entity";
+        $directoryPath = Configuration::getDir('assets-dir') . DIRECTORY_SEPARATOR .$entity;
 
         if (!is_dir($directoryPath) && !mkdir($directoryPath, 0777, true)) {
             throw new \Exception("Failed to create directory '$directoryPath'.");
@@ -59,19 +53,22 @@ class ReleasesProcessor
             $currentTag = file_get_contents($directoryPath . DIRECTORY_SEPARATOR . 'tag.txt');
         }
 
+        $basename = basename($browserDownloadUrl);
+
         if ($currentTag !== $tagName) {
 
             $releaseContent = file_get_contents($browserDownloadUrl);
-            $releaseBinary = 'binaries'. DIRECTORY_SEPARATOR . $entity;
+            $releaseBinary = Configuration::getDir('binaries-dir') . DIRECTORY_SEPARATOR . $entity;
 
             self::emptyDirectory($directoryPath);
             self::emptyDirectory($releaseBinary);
 
-            $basename = basename($browserDownloadUrl);
             file_put_contents($directoryPath . DIRECTORY_SEPARATOR . $basename, $releaseContent);
             file_put_contents($directoryPath . DIRECTORY_SEPARATOR . 'tag.txt', $tagName);
             mkdir($releaseBinary . DIRECTORY_SEPARATOR .$tagName, 0777, true);
             self::unzipFile($directoryPath . DIRECTORY_SEPARATOR . $basename,$releaseBinary . DIRECTORY_SEPARATOR .$tagName );
+        } else {
+            echo "No update required for [$entity]. Latest version is already available [$tagName]." . PHP_EOL;
         }
 
         $a = 1;
@@ -81,8 +78,7 @@ class ReleasesProcessor
     {
         // Check if the ZIP file exists
         if (!file_exists($zipFilePath)) {
-            echo "ZIP file does not exist: $zipFilePath";
-            return false;
+            throw new \Exception("ZIP file does not exist: $zipFilePath");
         }
 
         // Create a ZipArchive object
@@ -115,7 +111,6 @@ class ReleasesProcessor
     private static function emptyDirectory($dir) {
         // Check if the directory exists
         if (!is_dir($dir)) {
-            echo "Directory does not exist: $dir";
             return false;
         }
 

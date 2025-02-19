@@ -1,17 +1,30 @@
-llama-server:
-  git-releases:
-    url: 'https://api.github.com/repos/ggml-org/llama.cpp/releases'
-    type: 'linux'
-    subtype: 'general'
+paths:
+  # The directories can be either relative or absolute path.
+  assets-dir: 'assets'
+  binaries-dir: 'binaries'
+  git-clones-dir: 'git-clones'
 
-    archive-pattern:
-      'linux':
-        binaries:
-          'server': 'build/bin/llama-server'
-        subtypes:
-          'general': 'llama-b*-bin-ubuntu-x64.zip'
-          'vulkan': 'llama-b*-bin-ubuntu-vulkan-x64.zip'
+builds:
+  llama-server:
+    check-updates:
+      true
+    update-type: 'git-release'
+    git-releases:
+      url: 'https://api.github.com/repos/ggml-org/llama.cpp/releases'
+      type: 'linux'
+      subtype: 'general'
+      archive-pattern:
+        'linux':
+          binaries:
+            'server': 'build/bin/llama-server'
+          subtypes:
+            'general': 'llama-b*-bin-ubuntu-x64.zip'
+            'vulkan': 'llama-b*-bin-ubuntu-vulkan-x64.zip'
 
-  check-updates:
-    true
-
+  whisply:
+    check-updates:
+      true
+    update-type: 'git-repo'
+    git-clone:
+      'repo': 'https://github.com/tsmdt/whisply'
+      'branch': 'main'

@@ -22,13 +22,21 @@ class Configuration
         }
 
         if (!file_exists("config.yml")) {
-            throw new Exception("config.yml file does not exist.");
+            echo('WARNING: [config.yml] file does not exist. Using the default [config.example.yml] file.' . PHP_EOL);
+            if (!file_exists('config.example.yml')) {
+                throw new Exception('ERROR: Default config.example.yml not found.');
+            }
+            self::$configuration = Yaml::parseFile("config.example.yml");
         } else {
             // Load and parse the config.yml file
             self::$configuration = Yaml::parseFile("config.yml");
         }
 
         return self::$configuration;
+    }
+
+    static public function getDir($type) {
+        return self::$configuration['paths'][$type] ?? null;
     }
 
 }
