@@ -1,6 +1,6 @@
 /composer.lock
 /config.yml
 /vendor/
-/bin/*
-!/bin/.readme
+/binaries/*
 /.idea
+/assets/

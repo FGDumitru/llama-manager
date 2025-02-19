@@ -9,12 +9,19 @@ use GuzzleHttp\Exception\RequestException;
 
 class Updater
 {
+    /**
+     * @throws GuzzleException
+     */
     public function execute(): void
     {
         $this->checkLatestVersion();
         echo "Updater executed successfully!\n";
     }
 
+    /**
+     * @throws GuzzleException
+     * @throws Exception
+     */
     private function checkLatestVersion(): void
     {
         $entries = Configuration::readConfiguration();
@@ -26,17 +33,18 @@ class Updater
                 continue;
             }
 
-            $gitReleasesLink = $entry['git-releases'];
+            $gitReleasesLink = $entry['git-releases']['url'];
 
             try {
                 $entriesArray = $this->fetchGitHubReleases($gitReleasesLink);
 
                 $latestRelease = reset($entriesArray);
 
-                var_dump($latestRelease);
+                ReleasesProcessor::ProcessAssets($key, $latestRelease, $entry);
 
             } catch (Exception $e) {
                 echo 'Error: ' . $e->getMessage();
+                throw $e;
             }
 
         }
