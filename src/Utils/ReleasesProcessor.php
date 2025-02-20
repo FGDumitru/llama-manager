@@ -7,6 +7,9 @@ use ZipArchive;
 class ReleasesProcessor
 {
 
+    /**
+     * @throws \Exception
+     */
     public static function ProcessAssets(string $entity, array $latestRelease, array $entry): int
     {
         $matchedEntries = 0;
@@ -38,6 +41,9 @@ class ReleasesProcessor
         return $matchedEntries;
     }
 
+    /**
+     * @throws \Exception
+     */
     private static function downloadAsset($entity, $browserDownloadUrl, $tagName, $asset): void
     {
 
@@ -62,7 +68,7 @@ class ReleasesProcessor
 
         if ($currentTag !== $tagName) {
 
-            echo PHP_EOL . "INFO: Update found for [$entity]. Old tag [$tagName] - Current tag [$currentTag]." . PHP_EOL;
+            echo PHP_EOL . "INFO: Update found for [$entity]. Old tag [$currentTag] - Current tag [$tagName]." . PHP_EOL;
             echo "Asset size: [$size] bytes" . PHP_EOL;
             echo "Release date: [$created_at]" . PHP_EOL;
 
@@ -84,63 +90,63 @@ class ReleasesProcessor
 
     }
 
-    private static function unzipFile($zipFilePath, $extractToDirectory): bool
+    private static function unzipFile($zipFilePath, $extractToDirectory): void
     {
-        // Check if the ZIP file exists
         if (!file_exists($zipFilePath)) {
             throw new \Exception("ZIP file does not exist: $zipFilePath");
         }
 
-        // Create a ZipArchive object
         $zip = new ZipArchive;
 
-        // Open the ZIP file
         if ($zip->open($zipFilePath) === TRUE) {
-            // Create the target directory if it does not exist
             if (!is_dir($extractToDirectory)) {
                 mkdir($extractToDirectory, 0777, true);
             }
 
-            // Extract the contents to the target directory
             if ($zip->extractTo($extractToDirectory)) {
                 echo "Files extracted successfully to '$extractToDirectory'.";
             } else {
                 echo "Failed to extract files.";
             }
 
-            // Close the ZIP file
             $zip->close();
         } else {
             echo "Failed to open the ZIP file.";
-            return false;
         }
 
-        return true;
     }
 
-    private static function emptyDirectory($dir) {
-        // Check if the directory exists
+    private static function emptyDirectory($dir): bool
+    {
+        $dir = rtrim($dir, DIRECTORY_SEPARATOR);
+
         if (!is_dir($dir)) {
             return false;
         }
 
-        // Open the directory
-        $scan = glob(rtrim($dir, '/') . '/*');
-        foreach($scan as $index => $path) {
-            // Check if it's a directory
+        $scan = glob($dir . DIRECTORY_SEPARATOR . '*');
+
+        if ($scan === false) {
+            return false; // Handle failure in `glob`
+        }
+
+        foreach ($scan as $path) {
             if (is_dir($path)) {
-                // Recursively empty the directory
-                self::emptyDirectory($path);
-                // Remove the directory
-                rmdir($path);
+                if (!self::emptyDirectory($path)) {
+                    return false;
+                }
+
+                if (!rmdir($path)) {
+                    return false;
+                }
             } else {
-                // Delete the file
-                unlink($path);
+                if (!unlink($path)) {
+                    return false;
+                }
             }
         }
 
         return true;
     }
-
 
 }
