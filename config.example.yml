@@ -3,6 +3,11 @@ paths:
   assets-dir: 'assets'
   binaries-dir: 'binaries'
   git-clones-dir: 'git-clones'
+general:
+  gitToken: ''
+  gitRateLimit:
+    count: 10 # do not make more than X call per [timeout] seconds
+    timeout: 300
 
 builds:
   llama-server:

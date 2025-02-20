@@ -36,7 +36,13 @@ class Updater
             // Process releases.
             if ('git-release' === $entry['update-type']) {
                 $gitReleasesLink = $entry['git-releases']['url'];
-                $entriesArray = $this->fetchGitHubReleases($gitReleasesLink);
+                try {
+                  $entriesArray = $this->fetchGitHubReleases($gitReleasesLink);
+                } catch (Exception $e) {
+                  echo $e->getMessage() . PHP_EOL;
+                  $a = 1;
+                }
+
                 $latestRelease = reset($entriesArray);
                 ReleasesProcessor::ProcessAssets($key, $latestRelease, $entry);
                 continue;
@@ -78,7 +84,7 @@ class Updater
             return $releasesJson;
         } catch (RequestException $e) {
             // Handle any errors that occur during the request
-            throw new Exception("Guzzle HTTP Error: " . $e->getMessage());
+            throw $e;
         }
     }
 
