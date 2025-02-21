@@ -11,6 +11,9 @@ class GitHubAdapter implements AdapterInterface
     private $config = null;
 
 
+    /**
+     * @throws \Exception
+     */
     public function __construct()
     {
         $this->config = Configuration::readConfiguration()['GitHub'] ?? [];
@@ -18,7 +21,8 @@ class GitHubAdapter implements AdapterInterface
 
     public function getRawLimits(): array
     {
-        // TODO: Implement getRawLimits() method.
+        $limits = file_get_contents($this->getBaseUrl());
+        return json_decode($limits, true);
     }
 
     public function getBaseUrl(): string

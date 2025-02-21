@@ -6,16 +6,16 @@ paths:
 
 general:
   GitHub:
-    gitToken: ''
-    gitRateLimit:
-      count: 10 # do not make more than X call per [timeout] minutes
-      timeout: 60
+    gitToken: '' # WIP
+    gitRateLimit: # WIP
+      count: 10 # WIP do not make more than X call per [timeout] minutes
+      timeout: 60 # WIP
 
 builds: # List of GitHub repos
   # Inference of Meta's LLaMA model (and others) in pure C/C++
   llama-server:
     check-updates:
-      true
+      false
     update-type: 'git-release'
     git-releases:
       url: 'https://api.github.com/repos/ggml-org/llama.cpp/releases'
@@ -23,7 +23,7 @@ builds: # List of GitHub repos
       subtype: 'general'
       archive-pattern:
         'linux':
-          binaries:
+          binaries: # These entries will be marked as executables.
             'server': 'build/bin/llama-server'
           subtypes:
             'general': 'llama-b*-bin-ubuntu-x64.zip'
@@ -34,6 +34,8 @@ builds: # List of GitHub repos
     check-updates:
       true
     update-type: 'git-repo'
+    post-clone-commands:
+      - 'pip install .'
     git-clone:
       'repo': 'https://github.com/tsmdt/whisply'
       'branch': 'main'
