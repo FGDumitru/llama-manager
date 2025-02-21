@@ -3,13 +3,16 @@ paths:
   assets-dir: 'assets'
   binaries-dir: 'binaries'
   git-clones-dir: 'git-clones'
-general:
-  gitToken: ''
-  gitRateLimit:
-    count: 10 # do not make more than X call per [timeout] seconds
-    timeout: 300
 
-builds:
+general:
+  GitHub:
+    gitToken: ''
+    gitRateLimit:
+      count: 10 # do not make more than X call per [timeout] minutes
+      timeout: 60
+
+builds: # List of GitHub repos
+  # Inference of Meta's LLaMA model (and others) in pure C/C++
   llama-server:
     check-updates:
       true
@@ -26,6 +29,7 @@ builds:
             'general': 'llama-b*-bin-ubuntu-x64.zip'
             'vulkan': 'llama-b*-bin-ubuntu-vulkan-x64.zip'
 
+  # whisply combines faster-whisper and insanely-fast-whisper to offer an easy-to-use solution for batch processing files on Windows, Linux and Mac. It also enables word-level speaker annotation by integrating whisperX and pyannote.
   whisply:
     check-updates:
       true

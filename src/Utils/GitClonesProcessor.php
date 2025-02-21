@@ -4,7 +4,11 @@ namespace FGDumitru\LlamaManager\Utils;
 
 class GitClonesProcessor {
 
-  public static function ProcessAssets(string $entity, array $entry) {
+    /**
+     * @throws \Exception
+     */
+    public static function ProcessAssets(string $entity, array $entry): void
+    {
 
     $gitRepo = $entry['git-clone']['repo'];
     $gitBranch = $entry['git-clone']['branch'];
@@ -15,7 +19,11 @@ class GitClonesProcessor {
 
   }
 
-  public static function cloneRepository($entity, string $gitRepo, string $gitBranch, string $gitCloneDir) {
+    /**
+     * @throws \Exception
+     */
+    public static function cloneRepository($entity, string $gitRepo, string $gitBranch, string $gitCloneDir)
+    {
 
     if (!is_dir($gitCloneDir) && !mkdir($gitCloneDir, 0777, TRUE)) {
       throw new \Exception("Failed to create directory '$gitCloneDir'.");
@@ -30,7 +38,7 @@ class GitClonesProcessor {
       }
       $lastCommitHash = self::getCurrentRepoHash($gitCloneDir, $entity);
       echo "$entity repo: Setting current hash: $lastCommitHash." . PHP_EOL;
-      file_put_contents($gitCloneDir . DIRECTORY_SEPARATOR . $entity . '.hash.txt', $lastCommitHash);
+        file_put_contents($gitCloneDir . DIRECTORY_SEPARATOR . $entity . '.hash.txt', $lastCommitHash . PHP_EOL . time());
     }
     else {
       echo "$entity repo: Folder '$gitCloneDir' already exists and will not be cloned." . PHP_EOL;
