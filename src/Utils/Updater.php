@@ -34,8 +34,8 @@ class Updater
             }
 
             // Process releases.
-            if ('git-release' === $entry['update-type']) {
-                $gitReleasesLink = $entry['git-releases']['url'];
+            if ('git-binary' === $entry['update-type']) {
+                $gitReleasesLink = $entry['git-release']['url'];
                 try {
                   $entriesArray = $this->fetchGitHubReleases($gitReleasesLink);
                 } catch (Exception $e) {
@@ -49,7 +49,7 @@ class Updater
             }
 
             // Process git clone style repos.
-            if ('git-repo' === $entry['update-type']) {
+            if ('git-sourcecode' === $entry['update-type']) {
                 GitClonesProcessor::ProcessAssets($key, $entry);
             }
 

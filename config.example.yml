@@ -6,18 +6,18 @@ paths:
 
 general:
   GitHub:
-    gitToken: '' # WIP
-    gitRateLimit: # WIP
-      count: 10 # WIP do not make more than X call per [timeout] minutes
-      timeout: 60 # WIP
+    gitToken: ''
+    gitRateLimit:
+      count: 10 # do not make more than X call per [timeout] minutes
+      timeout: 60
 
 builds: # List of GitHub repos
   # Inference of Meta's LLaMA model (and others) in pure C/C++
   llama-server:
     check-updates:
-      false
-    update-type: 'git-release'
-    git-releases:
+      true
+    update-type: 'git-binary'
+    git-release:
       url: 'https://api.github.com/repos/ggml-org/llama.cpp/releases'
       type: 'linux'
       subtype: 'general'
@@ -29,13 +29,44 @@ builds: # List of GitHub repos
             'general': 'llama-b*-bin-ubuntu-x64.zip'
             'vulkan': 'llama-b*-bin-ubuntu-vulkan-x64.zip'
 
+
   # whisply combines faster-whisper and insanely-fast-whisper to offer an easy-to-use solution for batch processing files on Windows, Linux and Mac. It also enables word-level speaker annotation by integrating whisperX and pyannote.
   whisply:
     check-updates:
       true
-    update-type: 'git-repo'
+    update-type: 'git-sourcecode'
+    options:
+      - python-venv
     post-clone-commands:
       - 'pip install .'
-    git-clone:
+    post-update-commands:
+      - 'pip install .'
+    git-sourcecode:
       'repo': 'https://github.com/tsmdt/whisply'
       'branch': 'main'
+
+
+  # whisply combines faster-whisper and insanely-fast-whisper to offer an easy-to-use solution for batch processing files on Windows, Linux and Mac. It also enables word-level speaker annotation by integrating whisperX and pyannote.
+  whispercpp:
+    check-updates:
+      true
+    update-type: 'git-sourcecode'
+    post-clone-commands:
+      - 'sh ./models/download-ggml-model.sh tiny'
+      - 'sh ./models/download-ggml-model.sh tiny.en'
+      - 'sh ./models/download-ggml-model.sh small'
+      - 'sh ./models/download-ggml-model.sh small.en'
+      - 'sh ./models/download-ggml-model.sh small.en-tdrz'
+      - 'sh ./models/download-ggml-model.sh base'
+      - 'sh ./models/download-ggml-model.sh base.en'
+      - 'sh ./models/download-ggml-model.sh medium'
+      - 'sh ./models/download-ggml-model.sh medium.en'
+      - 'sh ./models/download-ggml-model.sh large-v1'
+      - 'sh ./models/download-ggml-model.sh large-v2'
+      - 'sh ./models/download-ggml-model.sh large-v3'
+      - 'sh ./models/download-ggml-model.sh large-v3-turbo'
+    post-update-commands:
+    git-sourcecode:
+      'repo': 'https://github.com/ggerganov/whisper.cpp'
+      'branch': 'master'
+

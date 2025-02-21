@@ -13,12 +13,12 @@ class ReleasesProcessor
     public static function ProcessAssets(string $entity, array $latestRelease, array $entry): int
     {
         $matchedEntries = 0;
-        $binaryType = $entry['git-releases']['type'];
-        $binarySubtype = $entry['git-releases']['subtype'];
+        $binaryType = $entry['git-release']['type'];
+        $binarySubtype = $entry['git-release']['subtype'];
         $tagName = $latestRelease['tag_name'];
 
         // Sample value for $archivePattern: "llama-b*-bin-ubuntu-x64.zip"
-        $archivePattern = $entry['git-releases']['archive-pattern'][$binaryType]['subtypes'][$binarySubtype];
+        $archivePattern = $entry['git-release']['archive-pattern'][$binaryType]['subtypes'][$binarySubtype];
 
         $regexPattern = '/^' . str_replace(['*', '?'], ['.*', '.'], $archivePattern) . '$/';
 

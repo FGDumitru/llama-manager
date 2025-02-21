@@ -11,8 +11,8 @@ class GitClonesProcessor
     public static function ProcessAssets(string $entity, array $entry): void
     {
 
-        $gitRepo = $entry['git-clone']['repo'];
-        $gitBranch = $entry['git-clone']['branch'];
+        $gitRepo = $entry['git-sourcecode']['repo'];
+        $gitBranch = $entry['git-sourcecode']['branch'];
         $gitClonesDir = Configuration::getDir('git-clones-dir') . DIRECTORY_SEPARATOR . $entity;
 
         self::cloneRepository($entity, $gitRepo, $gitBranch, $gitClonesDir, $entry);
@@ -26,15 +26,25 @@ class GitClonesProcessor
     public static function cloneRepository($entity, string $gitRepo, string $gitBranch, string $gitCloneDir, array $entry)
     {
 
+        $options = $entry['options'] ?? [];
+        $usePythonVenv = in_array("python-venv", $options);
+
         if (!is_dir($gitCloneDir) && !mkdir($gitCloneDir, 0777, TRUE)) {
             throw new \Exception("Failed to create directory '$gitCloneDir'.");
         }
 
         if (!is_dir($gitCloneDir . DIRECTORY_SEPARATOR . $entity)) {
             echo "$entity repo: Folder '$gitCloneDir' does not exist - will be cloned." . PHP_EOL;
-            $envActivateCommand = 'python -m venv ' . $entity . '_venv';
 
-            $command = "cd $gitCloneDir && git clone $gitRepo $entity && cd $entity && git checkout $gitBranch && $envActivateCommand";
+            if ($usePythonVenv) {
+                $envCreateCommand = 'python -m venv ' . $entity . '_venv';
+            }
+
+            $command = "cd $gitCloneDir && git clone $gitRepo $entity && cd $entity && git checkout $gitBranch";
+
+            if ($usePythonVenv) {
+                $command .= " && $envCreateCommand";
+            }
 
             $success = exec($command, $output, $exitCode);
             if (!$success || $exitCode !== 0) {
@@ -45,12 +55,23 @@ class GitClonesProcessor
             file_put_contents($gitCloneDir . DIRECTORY_SEPARATOR . $entity . '.hash.txt', $lastCommitHash . PHP_EOL . time());
 
             $changeFolderCommand = "cd $gitCloneDir && cd $entity";
-            foreach ($entry['post-clone-commands'] as $command) {
-                $command = $changeFolderCommand . " && $envActivateCommand && " . $command;
-                echo "$entity repo: executing command: [ $command ]" . PHP_EOL;
+
+            if ($usePythonVenv) {
+                $envActivateCommand = 'source ' . $entity . '_venv/bin/activate';
+            }
+
+            foreach ($entry['post-clone-commands'] ?? [] as $rawCommand) {
+
+                $command = $changeFolderCommand . " && $rawCommand";
+
+                if ($usePythonVenv) {
+                    $command = $changeFolderCommand . " && bash -c '$envActivateCommand && " . $rawCommand . '\'';
+                }
+
+                echo "$entity repo: executing post-clone command: [ $rawCommand ]" . PHP_EOL;
                 $success = exec($command, $output, $exitCode);
 
-                if (!$success || $exitCode !== 0) {
+                if (FALSE === $success || $exitCode !== 0) {
                     throw new \Exception("Failed to execute command [ $command ].");
                 }
 
@@ -69,18 +90,41 @@ class GitClonesProcessor
                 echo "$entity repo: Update detected." . PHP_EOL;
                 $command = "cd $gitClonedDir && git pull origin " . $gitBranch;
                 $success = exec($command, $output, $exitCode);
-                if (!$success || $exitCode !== 0) {
+                if (FALSE === $success || $exitCode !== 0) {
                     throw new \Exception("Failed to update repository '$gitCloneDir'.");
                 }
-                echo "$entity repo: Update complete. Current head at $originCommitHash" . PHP_EOL;
 
+                if ($usePythonVenv) {
+                    $envActivateCommand = 'source ' . $entity . '_venv/bin/activate';
+                }
+
+                $changeFolderCommand = "cd $gitCloneDir && cd $entity";
+                foreach ($entry['post-update-commands'] ?? [] as $rawCommand) {
+
+                    $command = $changeFolderCommand . " && $rawCommand";
+
+                    if ($usePythonVenv) {
+                        $command = $changeFolderCommand . " && bash -c '$envActivateCommand && " . $rawCommand . '\'';
+                    }
+
+                    echo "$entity repo: executing post-update command: [ $rawCommand ]" . PHP_EOL;
+                    $success = exec($command, $output, $exitCode);
+
+                    if (FALSE === $success || $exitCode !== 0) {
+                        throw new \Exception("Failed to execute command [ $command ].");
+                    }
+
+                    echo "$entity repo: Update complete. Current head at $originCommitHash" . PHP_EOL;
+
+                }
             }
-        }
 
+
+        }
     }
 
-
-    private static function getCurrentRepoHash(string $gitCloneDir, string $entity): string
+    private
+    static function getCurrentRepoHash(string $gitCloneDir, string $entity): string
     {
         $gitDir = $gitCloneDir . DIRECTORY_SEPARATOR . $entity;
         $success = exec("cd $gitDir && git rev-parse --verify HEAD", $output, $exitCode);
@@ -90,10 +134,13 @@ class GitClonesProcessor
         return $success;
     }
 
-    private static function getOriginRepoHash(string $gitCloneDir, string $entity): string
+    private
+    static function getOriginRepoHash(string $gitCloneDir, string $entity): string
     {
         $gitDir = $gitCloneDir . DIRECTORY_SEPARATOR . $entity;
-        $success = exec("cd $gitDir && git rev-parse --verify origin", $output, $exitCode);
+        $success = exec("cd $gitDir && git fetch origin && git rev-parse --verify origin", $output, $exitCode);
+        echo implode("\n", $output);
+
         if (!$success || $exitCode !== 0) {
             throw new \Exception("Failed to get last commit hash for remote repository '$gitCloneDir'.");
         }
