@@ -37,13 +37,13 @@ class GitClonesProcessor
             echo "$entity repo: Folder '$gitCloneDir' does not exist - will be cloned." . PHP_EOL;
 
             if ($usePythonVenv) {
-                $envCreateCommand = 'python -m venv ' . $entity . '_venv';
+                $envCreateCommand = '&& python -m venv ' . $entity . '_venv';
                 echo PHP_EOL . "Using a virtual Python environment: $envCreateCommand" . PHP_EOL;
             } else {
               $envCreateCommand = '';
             }
 
-            $command = "pwd ; cd $gitCloneDir && $envCreateCommand && git clone $gitRepo $entity && cd $entity && git checkout $gitBranch";
+            $command = "pwd ; cd $gitCloneDir $envCreateCommand && git clone $gitRepo $entity && cd $entity && git checkout $gitBranch";
 
             echo PHP_EOL . $command . PHP_EOL;
 
@@ -67,9 +67,12 @@ class GitClonesProcessor
 
                 if ($usePythonVenv) {
                     $command = $changeFolderCommand . " && bash -c '$envActivateCommand && " . $rawCommand . '\'';
+                } else {
+                  $command = $changeFolderCommand . " && cd $entity && " . $rawCommand;
                 }
 
                 echo "$entity repo: executing post-clone command: [ $rawCommand ]" . PHP_EOL;
+                echo PHP_EOL . 'RAW: ' . $command . PHP_EOL;
                 $success = exec($command, $output, $exitCode);
 
                 if (FALSE === $success || $exitCode !== 0) {

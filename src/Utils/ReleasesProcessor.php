@@ -90,7 +90,33 @@ class ReleasesProcessor
 
     }
 
-    private static function unzipFile($zipFilePath, $extractToDirectory): void
+  private static function unzipFile($zipFilePath, $extractToDirectory): void
+  {
+    if (!file_exists($zipFilePath)) {
+      throw new \Exception("ZIP file does not exist: $zipFilePath");
+    }
+
+    // Create the target directory if it doesn't exist
+    if (!is_dir($extractToDirectory)) {
+      mkdir($extractToDirectory, 0777, true);
+    }
+
+    // Prepare the command to unzip the file
+    $command = "unzip -o " . escapeshellarg($zipFilePath) . " -d " . escapeshellarg($extractToDirectory);
+
+    // Execute the command
+    exec($command, $output, $returnVar);
+
+    // Check the return status of the command
+    if ($returnVar === 0) {
+      echo "Files extracted successfully to '$extractToDirectory'.";
+    } else {
+      echo "Failed to extract files. Command output: " . implode("\n", $output);
+    }
+  }
+
+
+  private static function unzipFilePHP($zipFilePath, $extractToDirectory): void
     {
         if (!file_exists($zipFilePath)) {
             throw new \Exception("ZIP file does not exist: $zipFilePath");
