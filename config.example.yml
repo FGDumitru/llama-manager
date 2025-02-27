@@ -13,21 +13,21 @@ general:
 
 builds: # List of GitHub repos
   # Inference of Meta's LLaMA model (and others) in pure C/C++
-  llama-server:
-    check-updates:
-      true
-    update-type: 'git-binary'
-    git-release:
-      url: 'https://api.github.com/repos/ggml-org/llama.cpp/releases'
-      type: 'linux'
-      subtype: 'general'
-      archive-pattern:
-        'linux':
-          binaries: # These entries will be marked as executables.
-            'server': 'build/bin/llama-server'
-          subtypes:
-            'general': 'llama-b*-bin-ubuntu-x64.zip'
-            'vulkan': 'llama-b*-bin-ubuntu-vulkan-x64.zip'
+#  llama-server:
+#    check-updates:
+#      true
+#    update-type: 'git-binary'
+#    git-release:
+#      url: 'https://api.github.com/repos/ggml-org/llama.cpp/releases'
+#      type: 'linux'
+#      subtype: 'general'
+#      archive-pattern:
+#        'linux':
+#          binaries: # These entries will be marked as executables.
+#            'server': 'build/bin/llama-server'
+#          subtypes:
+#            'general': 'llama-b*-bin-ubuntu-x64.zip'
+#            'vulkan': 'llama-b*-bin-ubuntu-vulkan-x64.zip'
 
 
   # whisply combines faster-whisper and insanely-fast-whisper to offer an easy-to-use solution for batch processing files on Windows, Linux and Mac. It also enables word-level speaker annotation by integrating whisperX and pyannote.
@@ -44,6 +44,18 @@ builds: # List of GitHub repos
     git-sourcecode:
       'repo': 'https://github.com/tsmdt/whisply'
       'branch': 'main'
+
+  llamacpp:
+    check-update:
+      true
+    update-type: 'git-sourcecode'
+    post-clone-commands:
+      - 'cmake -B build && cmake --build build --config Release -j || true' # CPU only build
+    post-update-commands:
+      - 'cmake -B build && cmake --build build --config Release -j || true' # CPU only build
+    git-sourcecode:
+      'repo': 'https://github.com/ggml-org/llama.cpp.git'
+      'branch': 'master'
 
 
   # whisply combines faster-whisper and insanely-fast-whisper to offer an easy-to-use solution for batch processing files on Windows, Linux and Mac. It also enables word-level speaker annotation by integrating whisperX and pyannote.
