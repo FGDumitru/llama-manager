@@ -38,13 +38,14 @@ class GitClonesProcessor
 
             if ($usePythonVenv) {
                 $envCreateCommand = 'python -m venv ' . $entity . '_venv';
+                echo PHP_EOL . "Using a virtual Python environment: $envCreateCommand" . PHP_EOL;
+            } else {
+              $envCreateCommand = '';
             }
 
-            $command = "cd $gitCloneDir && git clone $gitRepo $entity && cd $entity && git checkout $gitBranch";
+            $command = "pwd ; cd $gitCloneDir && $envCreateCommand && git clone $gitRepo $entity && cd $entity && git checkout $gitBranch";
 
-            if ($usePythonVenv) {
-                $command .= " && $envCreateCommand";
-            }
+            echo PHP_EOL . $command . PHP_EOL;
 
             $success = exec($command, $output, $exitCode);
             if (!$success || $exitCode !== 0) {
@@ -54,10 +55,10 @@ class GitClonesProcessor
             echo "$entity repo: Setting current hash: $lastCommitHash." . PHP_EOL;
             file_put_contents($gitCloneDir . DIRECTORY_SEPARATOR . $entity . '.hash.txt', $lastCommitHash . PHP_EOL . time());
 
-            $changeFolderCommand = "cd $gitCloneDir && cd $entity";
+            $changeFolderCommand = "cd $gitCloneDir";
 
             if ($usePythonVenv) {
-                $envActivateCommand = 'source ' . $entity . '_venv/bin/activate';
+                $envActivateCommand = 'source ' . $entity . '_venv/bin/activate ; cd ' . $entity;
             }
 
             foreach ($entry['post-clone-commands'] ?? [] as $rawCommand) {
@@ -98,13 +99,13 @@ class GitClonesProcessor
                     $envActivateCommand = 'source ' . $entity . '_venv/bin/activate';
                 }
 
-                $changeFolderCommand = "cd $gitCloneDir && cd $entity";
+                $changeFolderCommand = "cd $gitCloneDir";
                 foreach ($entry['post-update-commands'] ?? [] as $rawCommand) {
 
                     $command = $changeFolderCommand . " && $rawCommand";
 
                     if ($usePythonVenv) {
-                        $command = $changeFolderCommand . " && bash -c '$envActivateCommand && " . $rawCommand . '\'';
+                        $command = $changeFolderCommand . " && bash -c '$envActivateCommand && cd $entity && " . $rawCommand . '\'';
                     }
 
                     echo "$entity repo: executing post-update command: [ $rawCommand ]" . PHP_EOL;

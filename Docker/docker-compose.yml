@@ -1,0 +1,11 @@
+services:
+  llama-manager:
+    container_name: llama-manager
+    hostname: llama-manager
+#    restart: unless-stopped
+    tty: true
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ../:/app
