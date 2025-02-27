@@ -5,3 +5,4 @@
 /.idea
 /assets/
 /git-clones/
+**/*_venv

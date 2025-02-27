@@ -15,6 +15,9 @@ RUN docker-php-ext-install opcache
 
 RUN pecl install memcached-3.1.5
 
+RUN apt-get install libzip-dev -y
+RUN pecl install zip
+
 RUN docker-php-ext-install gd mysqli pdo_mysql mbstring bcmath gmp
 
 # Install necessary tools for building extensions
@@ -70,6 +73,7 @@ RUN pip3 install \
 
 RUN pip install yt-dlp
 
+#RUN #apt-get install php8-zip
 
 WORKDIR /app
 
