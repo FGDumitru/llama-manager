@@ -8,14 +8,14 @@ class GitClonesProcessor
     /**
      * @throws \Exception
      */
-    public static function ProcessAssets(string $entity, array $entry): void
+    public static function ProcessAssets(string $entity, array $entry, $updateExisting): void
     {
 
         $gitRepo = $entry['git-sourcecode']['repo'];
         $gitBranch = $entry['git-sourcecode']['branch'];
         $gitClonesDir = Configuration::getDir('git-clones-dir') . DIRECTORY_SEPARATOR . $entity;
 
-        self::cloneRepository($entity, $gitRepo, $gitBranch, $gitClonesDir, $entry);
+        self::cloneRepository($entity, $gitRepo, $gitBranch, $gitClonesDir, $entry, $updateExisting);
 
 
     }
@@ -23,7 +23,7 @@ class GitClonesProcessor
     /**
      * @throws \Exception
      */
-    public static function cloneRepository($entity, string $gitRepo, string $gitBranch, string $gitCloneDir, array $entry)
+    public static function cloneRepository($entity, string $gitRepo, string $gitBranch, string $gitCloneDir, array $entry, $updateExisting)
     {
 
         $options = $entry['options'] ?? [];
@@ -92,6 +92,12 @@ class GitClonesProcessor
 
                 $gitClonedDir = $gitCloneDir . DIRECTORY_SEPARATOR . $entity;
                 echo "$entity repo: Update detected." . PHP_EOL;
+
+                if (!$updateExisting) {
+                    echo "$entity repo: Updates is disabled." . PHP_EOL;
+                    return;
+                }
+
                 $command = "cd $gitClonedDir && git pull origin " . $gitBranch;
                 $success = exec($command, $output, $exitCode);
                 if (FALSE === $success || $exitCode !== 0) {

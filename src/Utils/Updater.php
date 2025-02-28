@@ -29,28 +29,30 @@ class Updater
         foreach ($entries['builds'] as $key => $entry) {
 
             // Check if the updates have been disabled for this git project. Idem if the entry does not exist.
-            if (!($entry['check-updates'] ?? true)) {
+            if (!($entry['enabled'] ?? true)) {
                 continue;
             }
+
+            $updateExisting = $entry['check-updates'] ?? true;
 
             // Process releases.
             if ('git-binary' === $entry['update-type']) {
                 $gitReleasesLink = $entry['git-release']['url'];
                 try {
-                  $entriesArray = $this->fetchGitHubReleases($gitReleasesLink);
+                    $entriesArray = $this->fetchGitHubReleases($gitReleasesLink, $updateExisting);
                 } catch (Exception $e) {
                   echo $e->getMessage() . PHP_EOL;
                   $a = 1;
                 }
 
                 $latestRelease = reset($entriesArray);
-                ReleasesProcessor::ProcessAssets($key, $latestRelease, $entry);
+                ReleasesProcessor::ProcessAssets($key, $latestRelease, $entry, $updateExisting);
                 continue;
             }
 
             // Process git clone style repos.
             if ('git-sourcecode' === $entry['update-type']) {
-                GitClonesProcessor::ProcessAssets($key, $entry);
+                GitClonesProcessor::ProcessAssets($key, $entry, $updateExisting);
             }
 
 
@@ -63,7 +65,8 @@ class Updater
      * @throws GuzzleException
      * @throws Exception
      */
-    function fetchGitHubReleases($url) {
+    function fetchGitHubReleases($url, $updateExisting)
+    {
         $client = new Client();
 
         try {

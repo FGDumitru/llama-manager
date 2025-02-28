@@ -13,25 +13,29 @@ general:
 
 builds: # List of GitHub repos
   # Inference of Meta's LLaMA model (and others) in pure C/C++
-#  llama-server:
-#    check-updates:
-#      true
-#    update-type: 'git-binary'
-#    git-release:
-#      url: 'https://api.github.com/repos/ggml-org/llama.cpp/releases'
-#      type: 'linux'
-#      subtype: 'general'
-#      archive-pattern:
-#        'linux':
-#          binaries: # These entries will be marked as executables.
-#            'server': 'build/bin/llama-server'
-#          subtypes:
-#            'general': 'llama-b*-bin-ubuntu-x64.zip'
-#            'vulkan': 'llama-b*-bin-ubuntu-vulkan-x64.zip'
+  llama-swap:
+    enabled:
+      true
+    check-updates:
+      true
+    update-type: 'git-binary'
+    git-release:
+      url: 'https://api.github.com/repos/mostlygeek/llama-swap/releases'
+      type: 'linux'
+      subtype: 'general'
+      archive-pattern:
+        'linux':
+          binaries: # These entries will be marked as executables.
+            'server': 'build/bin/llama-server'
+          subtypes:
+            'general': 'llama-swap_*_linux_amd64.tar.gz'
+
 
 
   # whisply combines faster-whisper and insanely-fast-whisper to offer an easy-to-use solution for batch processing files on Windows, Linux and Mac. It also enables word-level speaker annotation by integrating whisperX and pyannote.
   whisply:
+    enabled:
+      true
     check-updates:
       true
     update-type: 'git-sourcecode'
@@ -46,13 +50,15 @@ builds: # List of GitHub repos
       'branch': 'main'
 
   llamacpp:
-    check-update:
+    enabled:
+      true
+    check-updates:
       true
     update-type: 'git-sourcecode'
     post-clone-commands:
-      - 'cmake -B build && cmake --build build --config Release -j || true' # CPU only build
+      - 'cmake -B build -DGGML_CUDA=ON && cmake --build build --config Release -j 16 || true' # CUDA only build
     post-update-commands:
-      - 'cmake -B build && cmake --build build --config Release -j || true' # CPU only build
+      - 'cmake -B build -DGGML_CUDA=ON && cmake --build build --config Release -j 16 || true' # CUDA only build
     git-sourcecode:
       'repo': 'https://github.com/ggml-org/llama.cpp.git'
       'branch': 'master'
@@ -60,10 +66,13 @@ builds: # List of GitHub repos
 
   # whisply combines faster-whisper and insanely-fast-whisper to offer an easy-to-use solution for batch processing files on Windows, Linux and Mac. It also enables word-level speaker annotation by integrating whisperX and pyannote.
   whispercpp:
+    enabled:
+      true
     check-updates:
       true
     update-type: 'git-sourcecode'
     post-clone-commands:
+      - 'cmake -B build -DWHISPER_SDL2=ON && cmake --build build --config Release -j 16 || true' # SDL2 only build
       - 'sh ./models/download-ggml-model.sh tiny'
       - 'sh ./models/download-ggml-model.sh tiny.en'
       - 'sh ./models/download-ggml-model.sh small'
@@ -78,6 +87,7 @@ builds: # List of GitHub repos
       - 'sh ./models/download-ggml-model.sh large-v3'
       - 'sh ./models/download-ggml-model.sh large-v3-turbo'
     post-update-commands:
+      - 'cmake -B build -DWHISPER_SDL2=ON && cmake --build build --config Release -j 16 || true' # SDL only build
     git-sourcecode:
       'repo': 'https://github.com/ggerganov/whisper.cpp'
       'branch': 'master'
