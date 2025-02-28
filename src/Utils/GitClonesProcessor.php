@@ -105,10 +105,10 @@ class GitClonesProcessor
                 $changeFolderCommand = "cd $gitCloneDir";
                 foreach ($entry['post-update-commands'] ?? [] as $rawCommand) {
 
-                    $command = $changeFolderCommand . " && $rawCommand";
-
                     if ($usePythonVenv) {
                         $command = $changeFolderCommand . " && bash -c '$envActivateCommand && cd $entity && " . $rawCommand . '\'';
+                    } else {
+                        $command = $changeFolderCommand . " && cd $entity && $rawCommand";
                     }
 
                     echo "$entity repo: executing post-update command: [ $rawCommand ]" . PHP_EOL;
