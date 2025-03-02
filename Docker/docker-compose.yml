@@ -10,3 +10,10 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ../:/app
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              # count: 1
+              capabilities: [ gpu ]
