@@ -8,12 +8,12 @@ logRequests: true
 # define valid model values and the upstream server start
 models:
 
-  "mistral 32K":
+  "Mistral 2501 32K":
     cmd: >
       /app/git-clones/llamacpp/llamacpp/build/bin/llama-server 
       --port 8999 
       -m /models/Mistral-Small-24B-Instruct-2501-Q8_0.gguf
-      -ngl 99 -ctk q4_0 -ctv q4_0 -fa
+      -ngl 99 -fa
       -c 32768
     # where to reach the server started by cmd, make sure the ports match
     proxy: http://0.0.0.0:8999
@@ -23,18 +23,63 @@ models:
     checkEndpoint: /health
     ttl: 300
 
-  "Fuse01":
+  "FuseO1-DeepSeekR1-QwQ-SkyT1-Flash-32B-Preview":
     cmd: >
       /app/git-clones/llamacpp/llamacpp/build/bin/llama-server 
       --port 8999 
       -m /models/FuseO1-DeepSeekR1-QwQ-SkyT1-Flash-32B-Preview.i1-Q6_K.gguf
-      -ngl 99 -ctk q4_0 -ctv q4_0 -fa
+      -ngl 99 -fa
       -c 32768
     # where to reach the server started by cmd, make sure the ports match
     proxy: http://0.0.0.0:8999
     # aliases names to use this model for
     aliases:
-      - "fuse01"
+      - "fuse01-32k"
+    checkEndpoint: /health
+    ttl: 300
+
+  "Llama-3.3-70B-Instruct-Q4_K_M":
+    cmd: >
+      /app/git-clones/llamacpp/llamacpp/build/bin/llama-server 
+      --port 8999 
+      -m /models/Llama-3.3-70B-Instruct-Q4_K_M.gguf
+      -ngl 99 -fa
+      -c 32768 -ctk q8_0 -ctv q8_0
+    # where to reach the server started by cmd, make sure the ports match
+    proxy: http://0.0.0.0:8999
+    # aliases names to use this model for
+    #aliases:
+    #  - "llama-3.3-70b-q4_k_m"
+    checkEndpoint: /health
+    ttl: 300
+
+  "Qwen2.5-Coder-32B-Instruct-Q6_K_L":
+    cmd: >
+      /app/git-clones/llamacpp/llamacpp/build/bin/llama-server 
+      --port 8999 
+      -m /models/Qwen2.5-Coder-32B-Instruct-Q6_K_L.gguf
+      -ngl 99 -fa
+      -c 32768 -ctk q8_0 -ctv q8_0
+    # where to reach the server started by cmd, make sure the ports match
+    proxy: http://0.0.0.0:8999
+    # aliases names to use this model for
+    aliases:
+      - "Qwen2.5-Coder-32B-Instruct-Q6_K_L"
+    checkEndpoint: /health
+    ttl: 300
+
+  "Qwen2.5-72b-instruct-q4_k_m":
+    cmd: >
+      /app/git-clones/llamacpp/llamacpp/build/bin/llama-server 
+      --port 8999 
+      -m /models/qwen2.5-72b-instruct-q4_k_m.gguf
+      -ngl 81 -fa
+      -c 16384 -ctk q8_0 -ctv q8_0
+    # where to reach the server started by cmd, make sure the ports match
+    proxy: http://0.0.0.0:8999
+    # aliases names to use this model for
+    aliases:
+      - "Qwen2.5-72b-instruct-q4_k_m"
     checkEndpoint: /health
     ttl: 300
 

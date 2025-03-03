@@ -43,8 +43,6 @@ class ReleasesProcessor
      */
     private static function downloadAsset($entity, $browserDownloadUrl, $tagName, $asset, $updateExisting): bool
     {
-
-        $releaseName = $asset['name'];
         $size = $asset['size'];
         $created_at = $asset['created_at'];
 
@@ -85,8 +83,7 @@ class ReleasesProcessor
 
             file_put_contents($directoryPath . DIRECTORY_SEPARATOR . $basename, $releaseContent);
             file_put_contents($directoryPath . DIRECTORY_SEPARATOR . 'tag.txt', $tagName);
-            mkdir($releaseBinary . DIRECTORY_SEPARATOR .$tagName, 0777, true);
-            self::unzipFile($directoryPath . DIRECTORY_SEPARATOR . $basename,$releaseBinary . DIRECTORY_SEPARATOR .$tagName );
+            self::unzipFile($directoryPath . DIRECTORY_SEPARATOR . $basename, $releaseBinary . DIRECTORY_SEPARATOR . 'release');
         } else {
             echo "No update required for [$entity]. Latest version is already available [$tagName]." . PHP_EOL;
         }

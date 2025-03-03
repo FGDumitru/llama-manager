@@ -8,7 +8,7 @@ general:
   enable-on-finish: true
   on-finish:
     # execute llama-swap and get ready for connections
-    - "./binaries/llama-swap/v90/llama-swap -config /app/configs/llama-swap-config.yml"
+    - "./binaries/llama-swap/release/llama-swap -config /app/configs/llama-swap-config.yml"
   GitHub:
     gitToken: ''
     gitRateLimit:
