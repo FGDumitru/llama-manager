@@ -6,3 +6,4 @@
 /assets/
 /git-clones/
 **/*_venv
+/models/*.gguf

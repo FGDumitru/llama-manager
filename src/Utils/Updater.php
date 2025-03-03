@@ -16,6 +16,21 @@ class Updater
     {
         $this->checkLatestVersion();
         echo  PHP_EOL . "Updater executed successfully!" . PHP_EOL;
+        $this->executeOnFinishCommands();
+    }
+
+    private function executeOnFinishCommands()
+    {
+        $config = Configuration::readConfiguration();
+
+        $canExecute = $config['general']['enable-on-finish'] ?? false;
+        if ($canExecute) {
+            foreach ($config['general']['on-finish'] ?? [] as $command) {
+                echo PHP_EOL . "Running command: {$command}" . PHP_EOL;
+                $result = shell_exec($command);
+                echo $result . PHP_EOL;
+            }
+        }
     }
 
     /**

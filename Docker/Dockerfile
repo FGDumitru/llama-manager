@@ -86,4 +86,4 @@ WORKDIR /app
 CMD [ "php", "updater.php" ]
 
 # Default command
-CMD ["bash"]
+# CMD ["bash"]

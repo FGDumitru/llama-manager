@@ -1,0 +1,44 @@
+# Seconds to wait for llama.cpp to load and be ready to serve requests
+# Default (and minimum) is 15 seconds
+healthCheckTimeout: 3600
+
+# Write HTTP logs (useful for troubleshooting), defaults to false
+logRequests: true
+
+# define valid model values and the upstream server start
+models:
+
+  "mistral 32K":
+    cmd: >
+      /app/git-clones/llamacpp/llamacpp/build/bin/llama-server 
+      --port 8999 
+      -m /models/Mistral-Small-24B-Instruct-2501-Q8_0.gguf
+      -ngl 99 -ctk q4_0 -ctv q4_0 -fa
+      -c 32768
+    # where to reach the server started by cmd, make sure the ports match
+    proxy: http://0.0.0.0:8999
+    # aliases names to use this model for
+    aliases:
+      - "mistral-32k"
+    checkEndpoint: /health
+    ttl: 300
+
+  "Fuse01":
+    cmd: >
+      /app/git-clones/llamacpp/llamacpp/build/bin/llama-server 
+      --port 8999 
+      -m /models/FuseO1-DeepSeekR1-QwQ-SkyT1-Flash-32B-Preview.i1-Q6_K.gguf
+      -ngl 99 -ctk q4_0 -ctv q4_0 -fa
+      -c 32768
+    # where to reach the server started by cmd, make sure the ports match
+    proxy: http://0.0.0.0:8999
+    # aliases names to use this model for
+    aliases:
+      - "fuse01"
+    checkEndpoint: /health
+    ttl: 300
+
+  "unload":
+    cmd: ls
+    ttl: 1
+

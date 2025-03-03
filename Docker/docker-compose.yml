@@ -8,8 +8,11 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    ports:
+      - "8855:8080"
     volumes:
       - ../:/app
+      - /home/panthera/NVME4TB/models:/models
     deploy:
       resources:
         reservations:
