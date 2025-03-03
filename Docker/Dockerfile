@@ -79,10 +79,11 @@ RUN ln -s /usr/bin/python3 /usr/local/bin/python
 
 RUN apt install python3-venv -y
 
+RUN apt install libsdl2-dev -y
 # Set working directory
 WORKDIR /app
 
 CMD [ "php", "updater.php" ]
 
 # Default command
-# CMD ["bash"]
+CMD ["bash"]
