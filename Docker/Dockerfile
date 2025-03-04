@@ -79,11 +79,19 @@ RUN ln -s /usr/bin/python3 /usr/local/bin/python
 
 RUN apt install python3-venv -y
 
-RUN apt install libsdl2-dev -y
+RUN apt install libsdl2-dev wget -y
+
+RUN pip install uv
+
+RUN mkdir -p miniconda3 && wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
+    bash Miniconda3-latest-Linux-x86_64.sh -b -u -p miniconda3 && rm Miniconda3-latest-Linux-x86_64.sh
+
+RUN bash -c 'source /miniconda3/bin/activate; which conda ; conda init --all'
+
 # Set working directory
 WORKDIR /app
 
-CMD [ "php", "updater.php" ]
+#CMD [ "php", "updater.php" ]
 
 # Default command
-# CMD ["bash"]
+CMD ["bash"]

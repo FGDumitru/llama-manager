@@ -96,3 +96,23 @@ builds: # List of GitHub repos
       'repo': 'https://github.com/ggerganov/whisper.cpp'
       'branch': 'master'
 
+  # whisply combines faster-whisper and insanely-fast-whisper to offer an easy-to-use solution for batch processing files on Windows, Linux and Mac. It also enables word-level speaker annotation by integrating whisperX and pyannote.
+  open-webui:
+    enabled:
+      true
+    check-updates:
+      true
+    update-type: 'git-sourcecode'
+    options:
+      - conda-venv
+    conda-python-version: 3.11
+    ENV:
+      - PORT: "9911"
+    post-clone-commands:
+      - # conda create -n open-web_venv python=3.11 -y
+      - 'cd backend && pip install -r requirements.txt'
+    post-update-commands:
+      - 'cd backend && pip install -r requirements.txt'
+    git-sourcecode:
+      'repo': 'https://github.com/open-webui/open-webui.git'
+      'branch': 'main'

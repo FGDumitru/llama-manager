@@ -10,6 +10,7 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8855:8080"
+      - "9911:9911"
     volumes:
       - ../:/app
       - /home/panthera/NVME4TB/models:/models
