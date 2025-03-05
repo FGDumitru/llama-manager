@@ -109,9 +109,10 @@ builds: # List of GitHub repos
     ENV:
       - PORT: "9911"
     post-clone-commands:
-      - # conda create -n open-web_venv python=3.11 -y
+      # conda create -n open-web_venv python=3.11 -y
       - 'cd backend && pip install -r requirements.txt'
     post-update-commands:
+      # conda activate open-web_venv
       - 'cd backend && pip install -r requirements.txt'
     git-sourcecode:
       'repo': 'https://github.com/open-webui/open-webui.git'
