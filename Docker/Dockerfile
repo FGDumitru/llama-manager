@@ -83,15 +83,24 @@ RUN apt install libsdl2-dev wget -y
 
 RUN pip install uv
 
+#RUN pip install open-webui
+
 RUN mkdir -p miniconda3 && wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
     bash Miniconda3-latest-Linux-x86_64.sh -b -u -p miniconda3 && rm Miniconda3-latest-Linux-x86_64.sh
 
 RUN bash -c 'source /miniconda3/bin/activate; which conda ; conda init --all'
 
+RUN bash -c 'source /miniconda3/bin/activate; which conda ; conda create -n open-web_venv python=3.11 -y'
+
+RUN bash -c 'source /miniconda3/bin/activate; which conda ; conda activate open-web_venv ; pip install open-webui'
+
 # Set working directory
 WORKDIR /app
 
-#CMD [ "php", "updater.php" ]
+COPY start.sh /start.sh
+RUN chmod +x /start.sh
+CMD ["/bin/bash", "/start.sh"]
+
 
 # Default command
-CMD ["bash"]
+#CMD ["bash"]

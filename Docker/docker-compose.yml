@@ -10,10 +10,12 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8855:8080"
-      - "9911:9911"
+      - "8866:8081"
+      - "9966:8999"
     volumes:
       - ../:/app
       - /home/panthera/NVME4TB/models:/models
+      - ../webui_data:/miniconda3/envs/open-web_venv/lib/python3.11/site-packages/open_webui/data
     deploy:
       resources:
         reservations:
