@@ -98,8 +98,6 @@ RUN bash -c 'source /miniconda3/bin/activate; which conda ; conda activate open-
 
 RUN bash -c 'wget https://getcomposer.org/download/latest-stable/composer.phar && mv composer.phar /usr/local/bin/composer -f && chmod +x /usr/local/bin/composer'
 
-
-
 # Set working directory
 WORKDIR /app
 

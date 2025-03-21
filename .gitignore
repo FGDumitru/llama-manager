@@ -7,3 +7,4 @@
 /git-clones/
 **/*_venv
 /models/*.gguf
+/Docker/docker-compose.override.yml

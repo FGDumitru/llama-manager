@@ -9,4 +9,8 @@ open-webui serve --port 8081 &
 cd /app
 git config --global --add safe.directory /app
 composer install
+
+cd models && php download_default_models.php
+
+cd /app
 exec php updater.php

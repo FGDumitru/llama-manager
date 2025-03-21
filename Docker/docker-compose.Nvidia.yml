@@ -3,7 +3,7 @@ services:
     platform: linux/amd64
     container_name: llama-manager
     hostname: llama-manager
-#    restart: unless-stopped
+    #    restart: unless-stopped
     tty: true
     build:
       context: .
@@ -16,3 +16,10 @@ services:
       - ../:/app
       - ./models:/models
       - ../webui_data:/miniconda3/envs/open-web_venv/lib/python3.11/site-packages/open_webui/data
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              # count: 1
+              capabilities: [ gpu ]

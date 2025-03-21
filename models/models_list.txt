@@ -1,0 +1,1 @@
+https://huggingface.co/XelotX/Meta-Llama-3.1-8B-Instruct-240807-XelotX-_Quants/resolve/main/Meta-Llama-3.1-8B-Instruct-240807-XelotX-Q4_K_M.gguf?download=true
