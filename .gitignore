@@ -9,3 +9,4 @@
 /Docker/docker-compose.override.yml
 /webui_data/
 /.webui_secret_key
+/webui_data/webui.db
