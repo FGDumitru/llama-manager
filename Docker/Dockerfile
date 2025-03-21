@@ -42,6 +42,8 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone &
     php$PHP_MAJOR_MINOR-bcmath \
     php$PHP_MAJOR_MINOR-zip \
     php$PHP_MAJOR_MINOR-intl \
+    php$PHP_MAJOR_MINOR-mongodb \
+    php$PHP_MAJOR_MINOR-curl \
     php-pear \
     # Library dependencies
     libfreetype6-dev \
@@ -93,6 +95,10 @@ RUN bash -c 'source /miniconda3/bin/activate; which conda ; conda init --all'
 RUN bash -c 'source /miniconda3/bin/activate; which conda ; conda create -n open-web_venv python=3.11 -y'
 
 RUN bash -c 'source /miniconda3/bin/activate; which conda ; conda activate open-web_venv ; pip install open-webui'
+
+RUN bash -c 'wget https://getcomposer.org/download/latest-stable/composer.phar && mv composer.phar /usr/local/bin/composer -f && chmod +x /usr/local/bin/composer'
+
+
 
 # Set working directory
 WORKDIR /app
