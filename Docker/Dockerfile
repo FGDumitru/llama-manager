@@ -101,9 +101,11 @@ RUN bash -c 'wget https://getcomposer.org/download/latest-stable/composer.phar &
 # Set working directory
 WORKDIR /app
 
-COPY start.sh /start.sh
-RUN chmod +x /start.sh
-CMD ["/bin/bash", "/start.sh"]
+CMD ["php","/app/scripts/executioner.php"]
+
+#COPY start.sh /start.sh
+#RUN chmod +x /start.sh
+#CMD ["/bin/bash", "/start.sh"]
 
 
 # Default command

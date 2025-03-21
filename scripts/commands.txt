@@ -1,0 +1,9 @@
+source /miniconda3/bin/activate
+conda activate open-web_venv
+open-webui serve --port 8081 &
+cd /app
+git config --global --add safe.directory /app
+composer install -n
+cd models && php download_default_models.php
+cd /app
+exec php /app/scripts/updater.php
