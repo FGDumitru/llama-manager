@@ -12,7 +12,7 @@ models:
     cmd: >
       /app/git-clones/llamacpp/llamacpp/build/bin/llama-server 
       --port 8999 
-      -m /models/Meta-Llama-3.1-8B-Instruct-240807-XelotX-Q4_K_M.gguf
+      -m /app/models/Meta-Llama-3.1-8B-Instruct-240807-XelotX-Q4_K_M.gguf
       -fa
       -c 32768
       -ctk q4_0 -ctv q4_0
@@ -29,7 +29,7 @@ models:
     cmd: >
       /app/git-clones/llamacpp/llamacpp/build/bin/llama-server 
       --port 8999 
-      -m /models/Meta-Llama-3.1-8B-Instruct-240807-XelotX-Q4_K_M.gguf
+      -m /app/models/Meta-Llama-3.1-8B-Instruct-240807-XelotX-Q4_K_M.gguf
       -ngl 81 
       -fa
       -c 32768

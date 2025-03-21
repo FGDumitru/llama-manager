@@ -14,7 +14,7 @@ services:
       - "9966:8999"
     volumes:
       - ../:/app
-      - ./models:/models
+      - ./models:/app/models
       - ../webui_data:/miniconda3/envs/open-web_venv/lib/python3.11/site-packages/open_webui/data
     deploy:
       resources:
