@@ -8,3 +8,4 @@
 /models/*.gguf
 /Docker/docker-compose.override.yml
 /webui_data/
+/.webui_secret_key
