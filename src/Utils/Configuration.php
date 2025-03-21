@@ -21,15 +21,15 @@ class Configuration
             return self::$configuration;
         }
 
-        if (!file_exists("config.yml")) {
+        if (!file_exists("/app/config.yml")) {
             echo('WARNING: [config.yml] file does not exist. Using the default [config.example.yml] file.' . PHP_EOL);
-            if (!file_exists('config.example.yml')) {
+            if (!file_exists('/app/config.example.yml')) {
                 throw new Exception('ERROR: Default config.example.yml not found.');
             }
-            self::$configuration = Yaml::parseFile("config.example.yml");
+            self::$configuration = Yaml::parseFile("/app/config.example.yml");
         } else {
             // Load and parse the config.yml file
-            self::$configuration = Yaml::parseFile("config.yml");
+            self::$configuration = Yaml::parseFile("/app/config.yml");
         }
 
         return self::$configuration;
