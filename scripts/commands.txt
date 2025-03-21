@@ -6,4 +6,4 @@ git config --global --add safe.directory /app
 composer install -n
 cd models && php download_default_models.php
 cd /app
-exec php /app/scripts/updater.php
+php /app/scripts/updater.php
