@@ -98,6 +98,10 @@ RUN bash -c 'source /miniconda3/bin/activate; which conda ; conda activate open-
 
 RUN bash -c 'wget https://getcomposer.org/download/latest-stable/composer.phar && mv composer.phar /usr/local/bin/composer -f && chmod +x /usr/local/bin/composer'
 
+RUN apt install pandoc -y
+
+RUN pip install pandoc
+
 # Set working directory
 WORKDIR /app
 
