@@ -1,5 +1,7 @@
 source /miniconda3/bin/activate
 conda activate open-web_venv
+pip install --upgrade open-webui
+pip install --upgrade docling
 (open-webui serve --port 8081 &)
 cd /app
 git config --global --add safe.directory /app

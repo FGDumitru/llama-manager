@@ -94,13 +94,15 @@ RUN bash -c 'source /miniconda3/bin/activate; which conda ; conda init --all'
 
 RUN bash -c 'source /miniconda3/bin/activate; which conda ; conda create -n open-web_venv python=3.11 -y'
 
-RUN bash -c 'source /miniconda3/bin/activate; which conda ; conda activate open-web_venv ; pip install open-webui'
+RUN bash -c 'source /miniconda3/bin/activate; which conda ; conda activate open-web_venv ; pip install open-webui; pip install docling'
 
 RUN bash -c 'wget https://getcomposer.org/download/latest-stable/composer.phar && mv composer.phar /usr/local/bin/composer -f && chmod +x /usr/local/bin/composer'
 
 RUN apt install pandoc -y
 
 RUN pip install pandoc
+
+RUN apt install libcurl4-openssl-dev -y
 
 # Set working directory
 WORKDIR /app
